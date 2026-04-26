@@ -51,6 +51,8 @@ public class AdditivesController : ControllerBase
     {
         var additive = await _context.Additives
             .AsNoTracking()
+            .Include(a => a.AdditiveProducts)
+                .ThenInclude(ap => ap.Product)
             .FirstOrDefaultAsync(a => a.Id == id);
 
         if (additive is null)
@@ -64,6 +66,8 @@ public class AdditivesController : ControllerBase
     {
         var additive = await _context.Additives
             .AsNoTracking()
+            .Include(a => a.AdditiveProducts)
+                .ThenInclude(ap => ap.Product)
             .FirstOrDefaultAsync(a => a.ECode.ToLower() == eCode.ToLower());
 
         if (additive is null)
@@ -109,6 +113,14 @@ public class AdditivesController : ControllerBase
         Description = a.Description,
         ScientificReferences = a.ScientificReferences,
         CreatedAt = a.CreatedAt,
-        UpdatedAt = a.UpdatedAt
+        UpdatedAt = a.UpdatedAt,
+        Products = a.AdditiveProducts?.Select(ap => new ProductDto
+        {
+            Id = ap.Product.Id,
+            Barcode = ap.Product.Barcode,
+            Name = ap.Product.Name,
+            Brand = ap.Product.Brand,
+            ImageUrl = ap.Product.ImageUrl
+        }).ToList() ?? new List<ProductDto>()
     };
 }

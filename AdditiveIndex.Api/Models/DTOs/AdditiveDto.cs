@@ -1,5 +1,14 @@
 namespace AdditiveIndex.Api.Models.DTOs;
 
+public class ProductDto
+{
+    public int Id { get; set; }
+    public string Barcode { get; set; } = string.Empty;
+    public string Name { get; set; } = string.Empty;
+    public string? Brand { get; set; }
+    public string? ImageUrl { get; set; }
+}
+
 public class AdditiveDto
 {
     public int Id { get; set; }
@@ -11,6 +20,7 @@ public class AdditiveDto
     public string? ScientificReferences { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
+    public List<ProductDto> Products { get; set; } = new();
 }
 
 public class CreateAdditiveDto

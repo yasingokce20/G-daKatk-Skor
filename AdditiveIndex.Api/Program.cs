@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using AdditiveIndex.Api.Data;
 using AdditiveIndex.Api.Services;
+using AdditiveIndex.Api.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,6 +28,8 @@ builder.Services.AddScoped<OffDataImporter>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
+app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
