@@ -11,14 +11,16 @@
 - [x] Seed data (`SeedData.cs`) added and verified via API responses.
 - [x] API endpoints tested: list, search by E-code, filter by risk level.
 - [x] `OffDataImporter` service skeleton created with `HttpClient` factory registration.
+- [x] `Product` and `AdditiveProduct` (junction) entities created with EF migration.
+- [x] `AdditivesController` updated to include related `Products` in detail responses.
+- [x] Global exception handling middleware added and registered.
+- [x] Community `Discussion` entity, DTOs, controller, and migration created and verified.
 
 ## In Progress
-- [ ] Expand `Additive` entity with product/containment relation.
 - [ ] Implement background import pipeline from Open Food Facts.
+- [ ] Add FluentValidation for request DTOs.
 
 ## Pending
-- [ ] Add community `Discussion` entity and endpoints.
-- [ ] Add FluentValidation and global exception handling middleware.
 - [ ] Prepare for frontend integration (CORS, if needed).
 
 ## Known Issues

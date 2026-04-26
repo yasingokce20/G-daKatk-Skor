@@ -10,6 +10,7 @@ public class AppDbContext : DbContext
     public DbSet<Additive> Additives => Set<Additive>();
     public DbSet<Product> Products => Set<Product>();
     public DbSet<AdditiveProduct> AdditiveProducts => Set<AdditiveProduct>();
+    public DbSet<Discussion> Discussions => Set<Discussion>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -48,6 +49,13 @@ public class AppDbContext : DbContext
             entity.HasOne(ap => ap.Product)
                   .WithMany(p => p.AdditiveProducts)
                   .HasForeignKey(ap => ap.ProductId);
+        });
+
+        modelBuilder.Entity<Discussion>(entity =>
+        {
+            entity.HasKey(d => d.Id);
+            entity.Property(d => d.Username).IsRequired().HasMaxLength(100);
+            entity.Property(d => d.Message).IsRequired().HasMaxLength(2000);
         });
     }
 }
