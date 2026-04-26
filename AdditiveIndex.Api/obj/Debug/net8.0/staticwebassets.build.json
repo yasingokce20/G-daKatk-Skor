@@ -1,0 +1,12 @@
+{
+  "Version": 1,
+  "Hash": "DcNSKjRtbi4f+7kH0VTDMH3MUIbcmM74yjmcXhGmcf8=",
+  "Source": "AdditiveIndex.Api",
+  "BasePath": "_content/AdditiveIndex.Api",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": [],
+  "Endpoints": []
+}
