@@ -1,0 +1,50 @@
+# ── IDE / OS ──
+.vscode/
+.idea/
+.vs/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# ── AI / Code Assistants ──
+.windsurf/
+.cline/
+.codeium/
+
+# ── .NET / Backend ──
+bin/
+obj/
+*.user
+*.suo
+publish/
+out/
+*.db
+*.db-shm
+*.db-wal
+
+# ── Node.js / Frontend ──
+node_modules/
+dist/
+build/
+.vite/
+.eslintcache
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ── Environment / Secrets ──
+.env
+.env.local
+.env.*.local
+secrets.json
+
+# ── Test / Coverage ──
+coverage/
+*.coverage
+
+# ── Misc ──
+*.tmp
+*.temp

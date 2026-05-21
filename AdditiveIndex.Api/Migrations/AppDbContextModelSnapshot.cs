@@ -23,6 +23,17 @@ namespace AdditiveIndex.Api.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("AdiBySafety")
+                        .HasMaxLength(200)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("AlternativeNames")
+                        .HasMaxLength(500)
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("CategoryId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
 
@@ -35,9 +46,17 @@ namespace AdditiveIndex.Api.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("Function")
+                        .HasMaxLength(200)
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(200)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("RegulatoryStatus")
+                        .HasMaxLength(500)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("RiskLevel")
@@ -45,11 +64,11 @@ namespace AdditiveIndex.Api.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("ScientificReferences")
-                        .HasMaxLength(4000)
+                    b.Property<string>("Source")
+                        .HasMaxLength(200)
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Source")
+                    b.Property<string>("SourceDetails")
                         .HasMaxLength(500)
                         .HasColumnType("TEXT");
 
@@ -57,6 +76,8 @@ namespace AdditiveIndex.Api.Migrations
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
 
                     b.HasIndex("ECode")
                         .IsUnique();
@@ -77,6 +98,30 @@ namespace AdditiveIndex.Api.Migrations
                     b.HasIndex("ProductId");
 
                     b.ToTable("AdditiveProducts");
+                });
+
+            modelBuilder.Entity("AdditiveIndex.Api.Models.Entities.Category", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(1000)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ECodeRange")
+                        .HasMaxLength(50)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("AdditiveIndex.Api.Models.Entities.Discussion", b =>
@@ -110,15 +155,19 @@ namespace AdditiveIndex.Api.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Barcode")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Brand")
+                        .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(2000)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("ImageUrl")
@@ -130,15 +179,71 @@ namespace AdditiveIndex.Api.Migrations
                         .HasMaxLength(300)
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("UpdatedAt")
+                    b.Property<string>("ProductCategory")
+                        .HasMaxLength(200)
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Barcode")
-                        .IsUnique();
-
                     b.ToTable("Products");
+                });
+
+            modelBuilder.Entity("AdditiveIndex.Api.Models.Entities.Reference", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("AdditiveId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Authors")
+                        .HasMaxLength(500)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Doi")
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Journal")
+                        .HasMaxLength(300)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Source")
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Summary")
+                        .HasMaxLength(2000)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Url")
+                        .HasMaxLength(1000)
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("Year")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AdditiveId");
+
+                    b.ToTable("References");
+                });
+
+            modelBuilder.Entity("AdditiveIndex.Api.Models.Entities.Additive", b =>
+                {
+                    b.HasOne("AdditiveIndex.Api.Models.Entities.Category", "Category")
+                        .WithMany("Additives")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Category");
                 });
 
             modelBuilder.Entity("AdditiveIndex.Api.Models.Entities.AdditiveProduct", b =>
@@ -160,9 +265,27 @@ namespace AdditiveIndex.Api.Migrations
                     b.Navigation("Product");
                 });
 
+            modelBuilder.Entity("AdditiveIndex.Api.Models.Entities.Reference", b =>
+                {
+                    b.HasOne("AdditiveIndex.Api.Models.Entities.Additive", "Additive")
+                        .WithMany("References")
+                        .HasForeignKey("AdditiveId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Additive");
+                });
+
             modelBuilder.Entity("AdditiveIndex.Api.Models.Entities.Additive", b =>
                 {
                     b.Navigation("AdditiveProducts");
+
+                    b.Navigation("References");
+                });
+
+            modelBuilder.Entity("AdditiveIndex.Api.Models.Entities.Category", b =>
+                {
+                    b.Navigation("Additives");
                 });
 
             modelBuilder.Entity("AdditiveIndex.Api.Models.Entities.Product", b =>

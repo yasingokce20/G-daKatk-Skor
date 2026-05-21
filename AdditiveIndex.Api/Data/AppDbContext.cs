@@ -10,33 +10,70 @@ public class AppDbContext : DbContext
     public DbSet<Additive> Additives => Set<Additive>();
     public DbSet<Product> Products => Set<Product>();
     public DbSet<AdditiveProduct> AdditiveProducts => Set<AdditiveProduct>();
+    public DbSet<Category> Categories => Set<Category>();
+    public DbSet<Reference> References => Set<Reference>();
     public DbSet<Discussion> Discussions => Set<Discussion>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
+        modelBuilder.Entity<Category>(entity =>
+        {
+            entity.HasKey(c => c.Id);
+            entity.Property(c => c.Name).IsRequired().HasMaxLength(200);
+            entity.Property(c => c.Description).HasMaxLength(1000);
+            entity.Property(c => c.ECodeRange).HasMaxLength(50);
+        });
+
         modelBuilder.Entity<Additive>(entity =>
         {
             entity.HasKey(a => a.Id);
             entity.HasIndex(a => a.ECode).IsUnique();
-            entity.Property(a => a.Name).IsRequired().HasMaxLength(200);
             entity.Property(a => a.ECode).IsRequired().HasMaxLength(20);
+            entity.Property(a => a.Name).IsRequired().HasMaxLength(200);
+            entity.Property(a => a.AlternativeNames).HasMaxLength(500);
+            entity.Property(a => a.Description).HasMaxLength(2000);
+            entity.Property(a => a.Function).HasMaxLength(200);
             entity.Property(a => a.RiskLevel)
                   .HasConversion<string>()
                   .HasMaxLength(20);
-            entity.Property(a => a.Source).HasMaxLength(500);
-            entity.Property(a => a.Description).HasMaxLength(2000);
-            entity.Property(a => a.ScientificReferences).HasMaxLength(4000);
+            entity.Property(a => a.Source).HasMaxLength(200);
+            entity.Property(a => a.SourceDetails).HasMaxLength(500);
+            entity.Property(a => a.AdiBySafety).HasMaxLength(200);
+            entity.Property(a => a.RegulatoryStatus).HasMaxLength(500);
+
+            entity.HasOne(a => a.Category)
+                  .WithMany(c => c.Additives)
+                  .HasForeignKey(a => a.CategoryId)
+                  .OnDelete(DeleteBehavior.SetNull);
+        });
+
+        modelBuilder.Entity<Reference>(entity =>
+        {
+            entity.HasKey(r => r.Id);
+            entity.Property(r => r.Title).IsRequired().HasMaxLength(500);
+            entity.Property(r => r.Authors).HasMaxLength(500);
+            entity.Property(r => r.Journal).HasMaxLength(300);
+            entity.Property(r => r.Doi).HasMaxLength(100);
+            entity.Property(r => r.Url).HasMaxLength(1000);
+            entity.Property(r => r.Source).HasMaxLength(100);
+            entity.Property(r => r.Summary).HasMaxLength(2000);
+
+            entity.HasOne(r => r.Additive)
+                  .WithMany(a => a.References)
+                  .HasForeignKey(r => r.AdditiveId)
+                  .OnDelete(DeleteBehavior.Cascade);
         });
 
         modelBuilder.Entity<Product>(entity =>
         {
             entity.HasKey(p => p.Id);
-            entity.HasIndex(p => p.Barcode).IsUnique();
             entity.Property(p => p.Name).IsRequired().HasMaxLength(300);
-            entity.Property(p => p.Barcode).IsRequired().HasMaxLength(50);
-            entity.Property(p => p.Brand).HasMaxLength(200);
+            entity.Property(p => p.Brand).IsRequired().HasMaxLength(200);
+            entity.Property(p => p.ProductCategory).HasMaxLength(200);
+            entity.Property(p => p.Barcode).HasMaxLength(50);
+            entity.Property(p => p.Description).HasMaxLength(2000);
             entity.Property(p => p.ImageUrl).HasMaxLength(1000);
         });
 

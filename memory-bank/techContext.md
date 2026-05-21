@@ -1,6 +1,7 @@
 # Tech Context: AdditiveIndex
 
 ## Technology Stack
+### Backend
 - **Runtime:** .NET 8 (LTS)
 - **Project Type:** ASP.NET Core Web API
 - **Database:** SQLite (file-based, ideal for local dev and portable demos)
@@ -8,6 +9,17 @@
 - **API Documentation:** Swashbuckle.AspNetCore (Swagger + Swagger UI)
 - **Validation:** FluentValidation.AspNetCore (planned)
 - **External Data Source:** Open Food Facts REST API (https://world.openfoodfacts.org)
+
+### Frontend (`AdditiveIndex.Web/`)
+- **Framework:** React 18 + TypeScript
+- **Build Tool:** Vite 6
+- **Styling:** Tailwind CSS 4 + shadcn/ui (new-york style)
+- **Routing:** wouter
+- **Data Fetching:** @tanstack/react-query 5
+- **Charts:** recharts
+- **Animation:** framer-motion
+- **Icons:** lucide-react
+- **API Client:** Internalized orval-generated hooks in `src/api/`
 
 ## Development Environment
 - **OS:** Windows
@@ -22,16 +34,15 @@ Microsoft.EntityFrameworkCore.Design
 Swashbuckle.AspNetCore
 ```
 
-## Build & Migration Commands
+## Build & Run Commands
 ```bash
-# Create migration
-dotnet ef migrations add <Name> --project <ProjectPath>
+# Backend (.NET API on port 5004)
+dotnet ef migrations add <Name> --project AdditiveIndex.Api
+dotnet ef database update --project AdditiveIndex.Api
+dotnet run --project AdditiveIndex.Api --urls "http://localhost:5004"
 
-# Update database
-dotnet ef database update --project <ProjectPath>
-
-# Run API
-dotnet run --project <ProjectPath>
+# Frontend (Vite dev server on port 5173, proxies /api/* to :5004)
+cd AdditiveIndex.Web && npm run dev
 ```
 
 ## Constraints & Assumptions

@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Microsoft.EntityFrameworkCore;
 using AdditiveIndex.Api.Data;
 using AdditiveIndex.Api.Models.Entities;
 
@@ -18,7 +19,8 @@ public class OffDataImporter
     }
 
     /// <summary>
-    /// Fetches a single product from OFF by barcode and extracts additive references.
+    /// Fetches a single product from OFF by barcode, saves it locally,
+    /// and links it to existing additives via the junction table.
     /// </summary>
     public async Task ImportProductAsync(string barcode, CancellationToken ct = default)
     {
@@ -36,17 +38,74 @@ public class OffDataImporter
                 return;
             }
 
+            // Extract product details
+            var name = product.TryGetProperty("product_name", out var pn) ? pn.GetString() : null;
+            var brand = product.TryGetProperty("brands", out var b) ? b.GetString() : null;
+            var imageUrl = product.TryGetProperty("image_url", out var img) ? img.GetString() : null;
+
+            // Upsert product
+            var existingProduct = await _dbContext.Products
+                .FirstOrDefaultAsync(p => p.Barcode == barcode, ct);
+
+            if (existingProduct is null)
+            {
+                existingProduct = new Product
+                {
+                    Barcode = barcode,
+                    Name = name ?? "Unknown",
+                    Brand = brand ?? "Unknown",
+                    ImageUrl = imageUrl,
+                    CreatedAt = DateTime.UtcNow
+                };
+                _dbContext.Products.Add(existingProduct);
+            }
+            else
+            {
+                existingProduct.Name = name ?? existingProduct.Name;
+                existingProduct.Brand = brand ?? existingProduct.Brand;
+                existingProduct.ImageUrl = imageUrl ?? existingProduct.ImageUrl;
+                _dbContext.Products.Update(existingProduct);
+            }
+
+            await _dbContext.SaveChangesAsync(ct);
+
+            // Link additives
             if (product.TryGetProperty("additives_tags", out var additives))
             {
-                foreach (var additive in additives.EnumerateArray())
+                foreach (var additiveTag in additives.EnumerateArray())
                 {
-                    var tag = additive.GetString();
+                    var tag = additiveTag.GetString();
                     if (string.IsNullOrWhiteSpace(tag)) continue;
 
                     var eCode = tag.ToUpperInvariant().Replace("EN:", "").Trim();
-                    _logger.LogInformation("Found additive tag: {Tag} -> {ECode}", tag, eCode);
+
+                    var additive = await _dbContext.Additives
+                        .FirstOrDefaultAsync(a => a.ECode.ToLower() == eCode.ToLower(), ct);
+
+                    if (additive is null)
+                    {
+                        _logger.LogWarning("Additive {ECode} not found in local DB; skipping link.", eCode);
+                        continue;
+                    }
+
+                    var existingLink = await _dbContext.AdditiveProducts
+                        .FirstOrDefaultAsync(
+                            ap => ap.AdditiveId == additive.Id && ap.ProductId == existingProduct.Id, ct);
+
+                    if (existingLink is null)
+                    {
+                        _dbContext.AdditiveProducts.Add(new AdditiveProduct
+                        {
+                            AdditiveId = additive.Id,
+                            ProductId = existingProduct.Id
+                        });
+                        _logger.LogInformation("Linked {Barcode} -> {ECode}", barcode, eCode);
+                    }
                 }
             }
+
+            await _dbContext.SaveChangesAsync(ct);
+            _logger.LogInformation("Successfully imported product {Barcode}", barcode);
         }
         catch (Exception ex)
         {
