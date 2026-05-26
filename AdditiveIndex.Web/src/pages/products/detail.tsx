@@ -1,17 +1,14 @@
 import { useParams, Link } from "wouter";
-import { ArrowLeft, ShoppingBag, FlaskConical, AlertTriangle, ShieldCheck, Ban, Info } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { RiskBadge } from "@/components/risk-badge";
+import { RiskBadge, RiskDot } from "@/components/risk-badge-new";
 import { motion } from "framer-motion";
 
 interface Additive {
   id: number;
   eCode: string;
   name: string;
-  riskLevel: string;
+  riskLevel: "safe" | "low" | "moderate" | "high" | "banned";
   function: string | null;
   description: string | null;
   source: string | null;
@@ -36,11 +33,11 @@ const RISK_ORDER: Record<string, number> = {
   safe: 4,
 };
 
-const RISK_SUMMARY: Record<string, { label: string; color: string; icon: React.ComponentType<{ className?: string }> }> = {
-  banned: { label: "Yasaklı madde içeriyor", color: "text-red-600 bg-red-50 border-red-200", icon: Ban },
-  high: { label: "Yüksek riskli madde içeriyor", color: "text-orange-600 bg-orange-50 border-orange-200", icon: AlertTriangle },
-  moderate: { label: "Orta riskli madde içeriyor", color: "text-amber-600 bg-amber-50 border-amber-200", icon: Info },
-  safe: { label: "Tüm maddeler güvenli sınıfta", color: "text-green-600 bg-green-50 border-green-200", icon: ShieldCheck },
+const RISK_SUMMARY: Record<string, { label: string; color: string; icon: string }> = {
+  banned: { label: "Yasaklı madde içeriyor", color: "bg-[#bb0112]", icon: "close" },
+  high: { label: "Yüksek riskli madde içeriyor", color: "bg-[#e02928]", icon: "warning" },
+  moderate: { label: "Orta riskli madde içeriyor", color: "bg-[#fe932c]", icon: "warning" },
+  safe: { label: "Tüm maddeler güvenli sınıfta", color: "bg-[#00855d]", icon: "check_circle" },
 };
 
 function getProductRisk(additives: Additive[]): string {
@@ -49,6 +46,14 @@ function getProductRisk(additives: Additive[]): string {
     (a, b) => (RISK_ORDER[a.riskLevel] ?? 99) - (RISK_ORDER[b.riskLevel] ?? 99)
   );
   return sorted[0].riskLevel;
+}
+
+function getRiskCounts(additives: Additive[]) {
+  return {
+    safe: additives.filter(a => a.riskLevel === "safe" || a.riskLevel === "low").length,
+    moderate: additives.filter(a => a.riskLevel === "moderate").length,
+    high: additives.filter(a => a.riskLevel === "high" || a.riskLevel === "banned").length,
+  };
 }
 
 export function ProductDetail() {
@@ -67,13 +72,13 @@ export function ProductDetail() {
 
   if (isLoading) {
     return (
-      <div className="space-y-6">
-        <Skeleton className="h-6 w-24" />
+      <div className="space-y-6 pt-8">
+        <Skeleton className="h-8 w-48" />
         <Skeleton className="h-10 w-64" />
-        <Skeleton className="h-5 w-40" />
-        <div className="grid gap-3 mt-6">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <Skeleton key={i} className="h-20 rounded-xl" />
+        <Skeleton className="h-48 w-full rounded-xl" />
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <Skeleton key={i} className="h-32 rounded-xl" />
           ))}
         </div>
       </div>
@@ -83,10 +88,12 @@ export function ProductDetail() {
   if (isError || !product) {
     return (
       <div className="text-center py-20">
-        <ShoppingBag className="w-12 h-12 text-muted-foreground mx-auto mb-4 opacity-30" />
-        <h2 className="text-xl font-bold">Ürün bulunamadı</h2>
-        <Link href="/products" className="text-primary text-sm mt-2 inline-block hover:underline">
-          ← Ürünlere dön
+        <span className="material-symbols-outlined text-6xl text-[#6d7a72]/50">shopping_bag</span>
+        <h2 className="text-xl font-bold text-[#121c28] mt-4">Ürün bulunamadı</h2>
+        <Link href="/products">
+          <a className="text-[#006948] text-sm mt-2 inline-block hover:underline">
+            ← Ürünlere dön
+          </a>
         </Link>
       </div>
     );
@@ -94,7 +101,7 @@ export function ProductDetail() {
 
   const worstRisk = getProductRisk(product.additives);
   const summary = RISK_SUMMARY[worstRisk] ?? RISK_SUMMARY.safe;
-  const SummaryIcon = summary.icon;
+  const riskCounts = getRiskCounts(product.additives);
 
   const sortedAdditives = [...product.additives].sort(
     (a, b) => (RISK_ORDER[a.riskLevel] ?? 99) - (RISK_ORDER[b.riskLevel] ?? 99)
@@ -104,82 +111,148 @@ export function ProductDetail() {
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="space-y-6"
+      className="pt-8 pb-16"
     >
-      <Link href="/products" className="inline-flex items-center text-sm text-muted-foreground hover:text-primary transition-colors">
-        <ArrowLeft className="w-4 h-4 mr-1" />
-        Ürünlere dön
-      </Link>
+      {/* Breadcrumb */}
+      <nav className="py-4 flex items-center gap-2 text-[#6d7a72] text-sm mb-6">
+        <Link href="/">
+          <a className="hover:text-[#006948]">Anasayfa</a>
+        </Link>
+        <span className="material-symbols-outlined text-[16px]">chevron_right</span>
+        <Link href="/products">
+          <a className="hover:text-[#006948]">Ürünler</a>
+        </Link>
+        <span className="material-symbols-outlined text-[16px]">chevron_right</span>
+        <span className="text-[#121c28] font-semibold">{product.name}</span>
+      </nav>
 
-      {/* Header */}
-      <div className="flex flex-col gap-2">
-        <div className="flex flex-wrap items-center gap-2">
-          {product.productCategory && (
-            <Badge variant="secondary" className="text-xs">{product.productCategory}</Badge>
-          )}
-          {product.barcode && (
-            <span className="text-xs text-muted-foreground font-mono">Barkod: {product.barcode}</span>
-          )}
-        </div>
-        <h1 className="text-2xl font-bold">{product.name}</h1>
-        <p className="text-muted-foreground text-sm">{product.brand}{product.description ? ` — ${product.description}` : ""}</p>
-      </div>
-
-      {/* Risk Summary Banner */}
-      <div className={`flex items-center gap-3 p-4 rounded-xl border ${summary.color}`}>
-        <SummaryIcon className="w-5 h-5 flex-shrink-0" />
-        <div>
-          <div className="font-medium text-sm">{summary.label}</div>
-          <div className="text-xs mt-0.5 opacity-80">
-            {product.additives.length} katkı maddesi tespit edildi. Risk seviyesine göre sıralandı.
+      {/* Product Hero Section */}
+      <section className="grid grid-cols-1 md:grid-cols-12 gap-8 mb-12">
+        {/* Left: Product Image */}
+        <div className="md:col-span-5">
+          <div className="bg-white border border-[#bccac0] rounded-xl overflow-hidden aspect-square flex items-center justify-center p-12">
+            <span className="material-symbols-outlined text-9xl text-[#006948]/20">inventory_2</span>
           </div>
         </div>
-      </div>
 
-      {/* Additives List */}
-      <div>
-        <h2 className="text-base font-semibold mb-3 flex items-center gap-2">
-          <FlaskConical className="w-4 h-4 text-primary" />
-          İçerdiği Katkı Maddeleri
-          <span className="text-xs font-normal text-muted-foreground bg-muted px-2 py-0.5 rounded-full">
-            {product.additives.length} adet
-          </span>
-        </h2>
+        {/* Right: Product Info & Risk Summary */}
+        <div className="md:col-span-7 flex flex-col gap-6">
+          <div>
+            <h1 className="text-headline-lg text-[#121c28] mb-2">{product.name}</h1>
+            <p className="text-body-md text-[#3d4a42]">{product.brand}{product.description ? ` — ${product.description}` : ""}</p>
+            {product.barcode && (
+              <p className="text-sm text-[#6d7a72] mt-1 font-mono">Barkod: {product.barcode}</p>
+            )}
+          </div>
+
+          {/* Risk Summary Card */}
+          <div className="bg-[#eef4ff] border border-[#bccac0] rounded-xl p-6 flex flex-col gap-4">
+            <div className="flex items-center justify-between">
+              <h2 className="text-headline-md text-[#121c28]">Risk Özeti</h2>
+              <span className={`flex items-center gap-2 ${summary.color.replace('bg-', 'bg-opacity-20 bg-')} text-white px-4 py-1.5 rounded-full font-medium text-sm`}>
+                <span className="material-symbols-outlined text-[18px]">{summary.icon}</span>
+                {product.additives.length > 0 ? (
+                  worstRisk === "banned" || worstRisk === "high" ? "Yüksek Risk" :
+                  worstRisk === "moderate" ? "Orta Derece Risk" : "Düşük Risk"
+                ) : "Katkısız"}
+              </span>
+            </div>
+
+            {product.additives.length > 0 ? (
+              <>
+                <p className="text-body-md text-[#3d4a42]">
+                  Bu ürün toplam <strong className="text-[#121c28]">{product.additives.length} katkı maddesi</strong> içermektedir.
+                </p>
+                <div className="grid grid-cols-3 gap-4 mt-2">
+                  <div className="flex flex-col items-center p-3 bg-white rounded-lg border border-[#bccac0]">
+                    <span className="text-[#006948] font-bold text-headline-md">{riskCounts.safe}</span>
+                    <span className="text-label-sm text-[#3d4a42]">Güvenli</span>
+                  </div>
+                  <div className="flex flex-col items-center p-3 bg-white rounded-lg border border-[#bccac0]">
+                    <span className="text-[#fe932c] font-bold text-headline-md">{riskCounts.moderate}</span>
+                    <span className="text-label-sm text-[#3d4a42]">Dikkat</span>
+                  </div>
+                  <div className="flex flex-col items-center p-3 bg-white rounded-lg border border-[#bccac0]">
+                    <span className="text-[#bb0112] font-bold text-headline-md">{riskCounts.high}</span>
+                    <span className="text-label-sm text-[#3d4a42]">Zararlı</span>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <p className="text-body-md text-[#3d4a42]">
+                Bu ürün için katkı maddesi kaydı bulunmuyor.
+              </p>
+            )}
+          </div>
+
+          <div className="flex gap-4">
+            <button className="bg-[#006948] text-white px-8 py-3 rounded-full font-medium hover:opacity-90 transition-opacity flex items-center gap-2">
+              <span className="material-symbols-outlined">share</span>
+              Paylaş
+            </button>
+            <button className="border border-[#6d7a72] text-[#3d4a42] px-8 py-3 rounded-full font-medium hover:bg-[#d9e3f4] transition-colors flex items-center gap-2">
+              <span className="material-symbols-outlined">picture_as_pdf</span>
+              Raporu İndir
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* Additives List Section */}
+      <section className="mt-12">
+        <div className="flex items-center justify-between mb-8">
+          <h2 className="text-headline-lg text-[#121c28]">Katkı Maddesi Analizi</h2>
+        </div>
 
         {product.additives.length === 0 ? (
-          <Card className="bg-muted/30 border-dashed">
-            <CardContent className="flex flex-col items-center justify-center py-10 text-center text-muted-foreground text-sm">
-              <ShieldCheck className="w-8 h-8 mb-2 text-green-500 opacity-60" />
-              Bu ürün için katkı maddesi kaydı bulunmuyor.
-            </CardContent>
-          </Card>
+          <div className="bg-[#eef4ff] border border-[#bccac0] rounded-xl p-8 text-center">
+            <span className="material-symbols-outlined text-6xl text-[#006948]/50">verified</span>
+            <p className="text-[#3d4a42] mt-4">Bu ürün için katkı maddesi kaydı bulunmuyor.</p>
+          </div>
         ) : (
-          <div className="grid gap-3 sm:grid-cols-2">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {sortedAdditives.map((additive) => (
               <Link key={additive.id} href={`/additives/${additive.id}`}>
-                <div className="group flex items-start justify-between p-4 rounded-xl border bg-card hover:border-primary/40 hover:shadow-sm transition-all cursor-pointer">
-                  <div className="min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="font-mono text-sm font-semibold text-primary">{additive.eCode}</span>
-                      <RiskBadge level={additive.riskLevel} />
-                    </div>
-                    <div className="font-medium text-sm truncate group-hover:text-primary transition-colors">{additive.name}</div>
-                    {additive.function && (
-                      <div className="text-xs text-muted-foreground mt-0.5">{additive.function}</div>
-                    )}
-                    {additive.category && (
-                      <Badge variant="outline" className="mt-1.5 text-[10px] h-4 px-1.5 font-normal">
-                        {additive.category.name}
-                      </Badge>
-                    )}
+                <a className="group bg-white border border-[#bccac0] rounded-xl p-6 clinical-shadow hover:shadow-lg transition-all duration-300 cursor-pointer block">
+                  <div className="flex justify-between items-start mb-4">
+                    <RiskBadge level={additive.riskLevel} size="sm" />
+                    <span className="text-[#6d7a72] font-bold text-sm">{additive.eCode}</span>
                   </div>
-                  <ArrowLeft className="w-4 h-4 rotate-180 text-muted-foreground group-hover:text-primary flex-shrink-0 ml-2 mt-0.5 transition-colors" />
-                </div>
+                  <h3 className="text-headline-md text-[#121c28] mb-2 group-hover:text-[#006948] transition-colors">{additive.name}</h3>
+                  <p className="text-body-md text-[#3d4a42] line-clamp-2">
+                    {additive.function || additive.description || "Açıklama bulunmuyor."}
+                  </p>
+                  <div className="mt-4 pt-4 border-t border-[#bccac0] flex items-center text-[#006948] text-sm font-medium">
+                    Detaylı İncele
+                    <span className="material-symbols-outlined ml-auto group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                  </div>
+                </a>
               </Link>
             ))}
           </div>
         )}
-      </div>
+      </section>
+
+      {/* Scientific References Section */}
+      <section className="mt-16 p-8 bg-[#eef4ff] rounded-2xl border border-[#bccac0]">
+        <h2 className="text-headline-md text-[#121c28] mb-6">Bilimsel Dayanaklar</h2>
+        <ul className="space-y-4">
+          <li className="flex items-start gap-4">
+            <span className="material-symbols-outlined text-[#006948] mt-1">description</span>
+            <div>
+              <p className="text-body-md text-[#121c28] font-semibold">EFSA (European Food Safety Authority) Raporları</p>
+              <p className="text-label-sm text-[#3d4a42]">Gıda katkı maddelerinin güvenlik değerlendirmeleri ve ADI değerleri.</p>
+            </div>
+          </li>
+          <li className="flex items-start gap-4">
+            <span className="material-symbols-outlined text-[#006948] mt-1">description</span>
+            <div>
+              <p className="text-body-md text-[#121c28] font-semibold">WHO Gıda Katkı Maddeleri El Kitabı 2024</p>
+              <p className="text-label-sm text-[#3d4a42]">Uluslararası güvenlik standartları ve toksisite çalışmaları.</p>
+            </div>
+          </li>
+        </ul>
+      </section>
     </motion.div>
   );
 }

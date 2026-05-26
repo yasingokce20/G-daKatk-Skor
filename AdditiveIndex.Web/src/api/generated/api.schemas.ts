@@ -149,6 +149,7 @@ export interface StatsOverview {
   totalAdditives: number;
   totalCategories: number;
   totalReferences: number;
+  totalProducts: number;
   byRiskLevel: StatsOverviewByRiskLevel;
   lastUpdated: string;
 }

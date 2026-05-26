@@ -22,6 +22,7 @@ public class StatsController : ControllerBase
         var totalAdditives = await _context.Additives.CountAsync();
         var totalCategories = await _context.Categories.CountAsync();
         var totalReferences = await _context.References.CountAsync();
+        var totalProducts = await _context.Products.CountAsync();
 
         var riskCounts = await _context.Additives
             .GroupBy(a => a.RiskLevel)
@@ -37,6 +38,7 @@ public class StatsController : ControllerBase
             TotalAdditives = totalAdditives,
             TotalCategories = totalCategories,
             TotalReferences = totalReferences,
+            TotalProducts = totalProducts,
             ByRiskLevel = byRiskLevel,
             LastUpdated = DateTime.UtcNow
         });

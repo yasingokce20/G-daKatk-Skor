@@ -1,4 +1,5 @@
 import { Layout } from "@/components/layout";
+import { Footer } from "@/components/footer";
 import { Switch, Route } from "wouter";
 
 import { Dashboard } from "@/pages/dashboard";
@@ -11,16 +12,21 @@ import NotFound from "@/pages/not-found";
 
 export function AppRouter() {
   return (
-    <Layout>
-      <Switch>
-        <Route path="/" component={Dashboard} />
-        <Route path="/additives" component={AdditivesList} />
-        <Route path="/additives/:id" component={AdditiveDetail} />
-        <Route path="/products" component={ProductsList} />
-        <Route path="/products/:id" component={ProductDetail} />
-        <Route path="/docs" component={Docs} />
-        <Route component={NotFound} />
-      </Switch>
-    </Layout>
+    <div className="min-h-screen flex flex-col bg-[#f8f9ff]">
+      <Layout>
+        <div className="flex-grow">
+          <Switch>
+            <Route path="/" component={Dashboard} />
+            <Route path="/additives" component={AdditivesList} />
+            <Route path="/additives/:id" component={AdditiveDetail} />
+            <Route path="/products" component={ProductsList} />
+            <Route path="/products/:id" component={ProductDetail} />
+            <Route path="/docs" component={Docs} />
+            <Route component={NotFound} />
+          </Switch>
+        </div>
+      </Layout>
+      <Footer />
+    </div>
   );
 }

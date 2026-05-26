@@ -129,3 +129,4 @@ C:\Users\yasin\Desktop\AdditiveIndex\AdditiveIndex.Api\obj\Debug\net8.0\refint\A
 C:\Users\yasin\Desktop\AdditiveIndex\AdditiveIndex.Api\obj\Debug\net8.0\AdditiveIndex.Api.pdb
 C:\Users\yasin\Desktop\AdditiveIndex\AdditiveIndex.Api\obj\Debug\net8.0\AdditiveIndex.Api.genruntimeconfig.cache
 C:\Users\yasin\Desktop\AdditiveIndex\AdditiveIndex.Api\obj\Debug\net8.0\ref\AdditiveIndex.Api.dll
+C:\Users\yasin\Desktop\AdditiveIndex\AdditiveIndex.Api\obj\Debug\net8.0\AdditiveIndex.Api.sourcelink.json

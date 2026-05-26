@@ -1,17 +1,13 @@
 import { useParams, Link } from "wouter";
-import { ArrowLeft, FlaskConical, ShieldAlert, FileText, Info, Building, ShoppingBag, ChevronRight } from "lucide-react";
 import {
   useGetAdditive,
   getGetAdditiveQueryKey,
   useListReferences,
+  useListCategories,
 } from "@/api";
 import { useQuery } from "@tanstack/react-query";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { RiskBadge } from "@/components/risk-badge";
-import { Separator } from "@/components/ui/separator";
-import { Button } from "@/components/ui/button";
+import { RiskBadge } from "@/components/risk-badge-new";
 import { motion } from "framer-motion";
 
 interface Product {
@@ -37,6 +33,8 @@ export function AdditiveDetail() {
     { query: { enabled: !!numericId } }
   );
 
+  const { data: categories } = useListCategories();
+
   const { data: products, isLoading: productsLoading } = useQuery<Product[]>({
     queryKey: ["additive-products", numericId],
     queryFn: async () => {
@@ -49,13 +47,15 @@ export function AdditiveDetail() {
 
   if (isLoading) {
     return (
-      <div className="space-y-6">
-        <Skeleton className="h-6 w-24" />
-        <Skeleton className="h-10 w-2/3" />
-        <Skeleton className="h-5 w-28 rounded-full" />
-        <div className="grid gap-6 md:grid-cols-2 mt-6">
-          <Skeleton className="h-56" />
-          <Skeleton className="h-56" />
+      <div className="space-y-6 pt-8">
+        <Skeleton className="h-8 w-48" />
+        <Skeleton className="h-12 w-2/3" />
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-8">
+          <div className="lg:col-span-2 space-y-6">
+            <Skeleton className="h-64 w-full" />
+            <Skeleton className="h-48 w-full" />
+          </div>
+          <Skeleton className="h-64 w-full" />
         </div>
       </div>
     );
@@ -64,14 +64,17 @@ export function AdditiveDetail() {
   if (isError || !additive) {
     return (
       <div className="text-center py-20">
-        <ShieldAlert className="w-12 h-12 text-destructive mx-auto mb-4 opacity-50" />
-        <h2 className="text-xl font-bold">Katkı maddesi bulunamadı</h2>
-        <p className="text-muted-foreground text-sm mt-2 mb-5">
+        <span className="material-symbols-outlined text-6xl text-[#bb0112]/50">error</span>
+        <h2 className="text-xl font-bold text-[#121c28] mt-4">Katkı maddesi bulunamadı</h2>
+        <p className="text-[#3d4a42] text-sm mt-2 mb-5">
           İstenen katkı maddesi bulunamadı veya bir hata oluştu.
         </p>
-        <Button asChild variant="outline">
-          <Link href="/additives">← Listeye dön</Link>
-        </Button>
+        <Link href="/additives">
+          <a className="inline-flex items-center text-[#006948] hover:underline">
+            <span className="material-symbols-outlined mr-1">arrow_back</span>
+            Listeye dön
+          </a>
+        </Link>
       </div>
     );
   }
@@ -80,204 +83,180 @@ export function AdditiveDetail() {
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="space-y-6"
+      className="pt-8 pb-16"
     >
-      <Link
-        href="/additives"
-        className="inline-flex items-center text-sm text-muted-foreground hover:text-primary transition-colors"
-      >
-        <ArrowLeft className="w-4 h-4 mr-1" />
-        Katkı maddelerine dön
-      </Link>
-
-      {/* Header */}
-      <div>
-        <div className="flex items-center gap-3 mb-2">
-          <Badge variant="outline" className="font-mono text-base bg-card border-primary/20 text-primary px-3 py-1">
-            {additive.eCode}
-          </Badge>
-          <RiskBadge level={additive.riskLevel} />
-          {additive.category && (
-            <Badge variant="secondary" className="text-xs">
-              <FlaskConical className="w-3 h-3 mr-1" />
-              {additive.category.name}
-            </Badge>
+      {/* Hero Information Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-12">
+        {/* Main Title & E-Code */}
+        <div className="lg:col-span-2 flex flex-col justify-center">
+          <div className="flex items-center gap-3 mb-4">
+            <RiskBadge level={additive.riskLevel} />
+            <span className="text-[#6d7a72] text-sm font-medium">Gıda Katkı Maddesi Profili</span>
+          </div>
+          <h1 className="text-display-lg text-[#121c28] mb-2">
+            {additive.name} ({additive.eCode})
+          </h1>
+          <p className="text-body-lg text-[#3d4a42] max-w-2xl">
+            {additive.description || "Açıklama bulunmuyor."}
+          </p>
+          {additive.alternativeNames && (
+            <p className="text-sm text-[#6d7a72] mt-2">
+              Diğer adlar: {additive.alternativeNames}
+            </p>
           )}
         </div>
-        <h1 className="text-3xl font-bold tracking-tight">{additive.name}</h1>
-        {additive.alternativeNames && (
-          <p className="text-muted-foreground text-sm mt-1">
-            Diğer adları: {additive.alternativeNames}
-          </p>
-        )}
+
+        {/* Profile Summary Card */}
+        <div className="bg-[#dfe9fa] p-6 rounded-xl border border-[#bccac0] flex flex-col gap-4">
+          <div className="flex justify-between items-center border-b border-[#bccac0] pb-3">
+            <span className="text-[#3d4a42] text-sm font-medium">E-Kodu</span>
+            <span className="text-headline-md text-[#006948] font-semibold">{additive.eCode}</span>
+          </div>
+          <div className="flex justify-between items-center border-b border-[#bccac0] pb-3">
+            <span className="text-[#3d4a42] text-sm font-medium">Kaynak</span>
+            <span className="text-sm font-medium text-[#121c28]">
+              {additive.source === "natural" ? "Doğal" : additive.source === "synthetic" ? "Sentetik" : additive.source || "Bilinmiyor"}
+            </span>
+          </div>
+          <div className="flex justify-between items-center border-b border-[#bccac0] pb-3">
+            <span className="text-[#3d4a42] text-sm font-medium">Güvenlik Durumu</span>
+            <span className={`font-bold text-sm uppercase ${
+              additive.riskLevel === "safe" || additive.riskLevel === "low"
+                ? "text-[#006948]"
+                : additive.riskLevel === "moderate"
+                ? "text-[#904d00]"
+                : "text-[#bb0112]"
+            }`}>
+              {additive.riskLevel === "safe" && "Güvenli"}
+              {additive.riskLevel === "low" && "Düşük Risk"}
+              {additive.riskLevel === "moderate" && "Orta Risk"}
+              {additive.riskLevel === "high" && "Yüksek Risk"}
+              {additive.riskLevel === "banned" && "Yasaklı"}
+            </span>
+          </div>
+          <div className="flex justify-between items-center">
+            <span className="text-[#3d4a42] text-sm font-medium">Kategori</span>
+            <span className="text-sm font-medium text-[#121c28]">
+              {additive.category?.name || "Belirtilmemiş"}
+            </span>
+          </div>
+        </div>
       </div>
 
-      <div className="grid gap-5 md:grid-cols-3">
-        {/* Main Info */}
-        <Card className="md:col-span-2">
-          <CardHeader className="pb-3 border-b bg-muted/20">
-            <CardTitle className="text-base flex items-center gap-2">
-              <Info className="w-4 h-4 text-primary" />
-              Genel Bilgi
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-5 space-y-5">
-            {additive.description && (
+      {/* Bento Grid Analysis */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+        {/* Function Card */}
+        <div className="lg:col-span-2 bg-white border border-[#bccac0] p-8 rounded-xl clinical-shadow">
+          <div className="flex items-center gap-2 mb-6">
+            <span className="material-symbols-outlined text-[#006948]">science</span>
+            <h3 className="text-headline-md text-[#121c28]">İşlev ve Kullanım</h3>
+          </div>
+          <div className="space-y-4">
+            <div>
+              <span className="font-bold block text-[#121c28] text-sm mb-1">Teknolojik İşlev</span>
+              <span className="text-[#3d4a42] text-sm">{additive.function || "Belirtilmemiş"}</span>
+            </div>
+            {additive.sourceDetails && (
               <div>
-                <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1.5">Açıklama</h3>
-                <p className="text-sm leading-relaxed">{additive.description}</p>
+                <span className="font-bold block text-[#121c28] text-sm mb-1">Kaynak Detayları</span>
+                <span className="text-[#3d4a42] text-sm">{additive.sourceDetails}</span>
               </div>
             )}
-            <div className="grid sm:grid-cols-2 gap-5">
-              <div>
-                <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1.5">İşlev</h3>
-                <p className="font-medium">{additive.function || "Belirtilmemiş"}</p>
-              </div>
-              <div>
-                <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1.5">Kaynak</h3>
-                <p className="font-medium capitalize">
-                  {additive.source === "natural" ? "Doğal" : additive.source === "synthetic" ? "Sentetik" : additive.source || "Bilinmiyor"}
-                </p>
-                {additive.sourceDetails && (
-                  <p className="text-xs text-muted-foreground mt-1">{additive.sourceDetails}</p>
+          </div>
+        </div>
+
+        {/* Safety Card */}
+        <div className="lg:col-span-2 bg-white border border-[#bccac0] p-8 rounded-xl clinical-shadow">
+          <div className="flex items-center gap-2 mb-6">
+            <span className="material-symbols-outlined text-[#006948]">verified</span>
+            <h3 className="text-headline-md text-[#121c28]">Güvenlik Bilgisi</h3>
+          </div>
+          <div className="space-y-4">
+            <div>
+              <span className="font-bold block text-[#121c28] text-sm mb-1">ADI (Günlük Alım Limiti)</span>
+              <span className="text-[#3d4a42] text-sm">{additive.adiBySafety || "Belirtilmemiş / Sınırsız"}</span>
+            </div>
+            <div>
+              <span className="font-bold block text-[#121c28] text-sm mb-1">Mevzuat Durumu</span>
+              <span className="text-[#3d4a42] text-sm">{additive.regulatoryStatus || "Durum bilgisi mevcut değil"}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Clinical Data Summary */}
+        <div className="lg:col-span-4 bg-white border border-[#bccac0] p-8 rounded-xl clinical-shadow">
+          <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center gap-2">
+              <span className="material-symbols-outlined text-[#006948]">analytics</span>
+              <h3 className="text-headline-md text-[#121c28]">Klinik Veri Özeti</h3>
+            </div>
+          </div>
+
+          {productsLoading ? (
+            <Skeleton className="h-24 w-full" />
+          ) : products && products.length > 0 ? (
+            <div>
+              <p className="text-[#3d4a42] mb-4">
+                Bu katkı maddesi <strong className="text-[#121c28]">{products.length} üründe</strong> kullanılmaktadır.
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {products.slice(0, 5).map((product) => (
+                  <Link key={product.id} href={`/products/${product.id}`}>
+                    <a className="inline-flex items-center gap-1 px-3 py-1.5 bg-[#eef4ff] rounded-full text-sm hover:bg-[#006948] hover:text-white transition-colors">
+                      <span className="material-symbols-outlined text-[16px]">shopping_bag</span>
+                      {product.name}
+                    </a>
+                  </Link>
+                ))}
+                {products.length > 5 && (
+                  <span className="inline-flex items-center px-3 py-1.5 bg-[#dfe9fa] rounded-full text-sm text-[#3d4a42]">
+                    +{products.length - 5} daha
+                  </span>
                 )}
               </div>
             </div>
-          </CardContent>
-        </Card>
-
-        {/* Safety */}
-        <Card className="bg-primary/5 border-primary/15">
-          <CardHeader className="pb-3 border-b border-primary/10">
-            <CardTitle className="text-base flex items-center gap-2">
-              <ShieldAlert className="w-4 h-4 text-primary" />
-              Güvenlik Bilgisi
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-5 space-y-5">
-            <div>
-              <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1.5">
-                Kabul Edilebilir Günlük Alım (ADI)
-              </h3>
-              <div className="bg-card p-3 rounded-lg border font-mono text-sm">
-                {additive.adiBySafety || "Belirtilmemiş / Sınırsız"}
-              </div>
-            </div>
-            <Separator className="bg-primary/10" />
-            <div>
-              <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1.5">
-                Mevzuat Durumu
-              </h3>
-              <div className="flex items-start gap-2">
-                <Building className="w-4 h-4 text-muted-foreground mt-0.5 flex-shrink-0" />
-                <span className="text-sm leading-relaxed">
-                  {additive.regulatoryStatus || "Durum bilgisi mevcut değil"}
-                </span>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Products containing this additive */}
-      <div>
-        <h2 className="text-lg font-semibold mb-3 flex items-center gap-2">
-          <ShoppingBag className="w-5 h-5 text-primary" />
-          Bu Maddeyi İçeren Ürünler
-          {products && (
-            <span className="text-xs font-normal text-muted-foreground bg-muted px-2 py-0.5 rounded-full">
-              {products.length} ürün
-            </span>
+          ) : (
+            <p className="text-[#3d4a42]">Bu katkı maddesi için ürün kaydı bulunmuyor.</p>
           )}
-        </h2>
-
-        {productsLoading ? (
-          <div className="grid gap-2 sm:grid-cols-3">
-            {Array.from({ length: 3 }).map((_, i) => (
-              <Skeleton key={i} className="h-16 rounded-xl" />
-            ))}
-          </div>
-        ) : products && products.length > 0 ? (
-          <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-            {products.map((product) => (
-              <Link key={product.id} href={`/products/${product.id}`}>
-                <div className="group flex items-center justify-between p-3 rounded-xl border bg-card hover:border-primary/40 hover:shadow-sm transition-all cursor-pointer">
-                  <div className="min-w-0">
-                    <div className="font-medium text-sm truncate group-hover:text-primary transition-colors">{product.name}</div>
-                    <div className="text-xs text-muted-foreground">{product.brand}</div>
-                  </div>
-                  <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-primary flex-shrink-0 ml-2 transition-colors" />
-                </div>
-              </Link>
-            ))}
-          </div>
-        ) : (
-          <Card className="bg-muted/20 border-dashed">
-            <CardContent className="flex items-center justify-center py-8 text-muted-foreground text-sm text-center">
-              Bu katkı maddesi için ürün kaydı bulunmuyor.
-            </CardContent>
-          </Card>
-        )}
+        </div>
       </div>
 
-      {/* References */}
-      <div>
-        <h2 className="text-lg font-semibold mb-3 flex items-center gap-2">
-          <FileText className="w-5 h-5 text-primary" />
-          Bilimsel Kaynaklar
-        </h2>
+      {/* References Section */}
+      <section className="border-t border-[#bccac0] pt-12">
+        <h2 className="text-headline-md text-[#121c28] mb-6">Bilimsel Atıflar ve Kaynakça</h2>
 
         {refsLoading ? (
-          <div className="space-y-3">
-            <Skeleton className="h-24 w-full" />
-            <Skeleton className="h-24 w-full" />
+          <div className="space-y-4">
+            <Skeleton className="h-20 w-full" />
+            <Skeleton className="h-20 w-full" />
           </div>
         ) : references && references.length > 0 ? (
-          <div className="grid gap-3 md:grid-cols-2">
-            {references.map((ref) => (
-              <Card key={ref.id} className="hover:shadow-sm transition-shadow">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm leading-snug">
-                    {ref.url ? (
-                      <a
-                        href={ref.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="hover:text-primary hover:underline flex items-start gap-1.5"
-                      >
-                        {ref.title}
-                        <ArrowLeft className="w-3 h-3 rotate-[135deg] flex-shrink-0 mt-0.5" />
-                      </a>
-                    ) : (
-                      ref.title
-                    )}
-                  </CardTitle>
-                  <CardDescription className="text-xs">
-                    {ref.authors} {ref.year ? `(${ref.year})` : ""}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex flex-wrap gap-1.5 mb-2">
-                    {ref.journal && <span className="text-xs italic text-muted-foreground">{ref.journal}</span>}
-                    {ref.source && (
-                      <Badge variant="secondary" className="text-[10px] h-4 px-1">{ref.source}</Badge>
-                    )}
-                  </div>
-                  {ref.summary && (
-                    <p className="text-xs text-muted-foreground line-clamp-3">{ref.summary}</p>
+          <div className="space-y-4">
+            {references.map((ref, index) => (
+              <div key={ref.id} className="flex gap-4 text-sm text-[#3d4a42] italic border-l-4 border-[#006948] pl-4">
+                <span className="flex-shrink-0 text-[#006948] font-bold">[{index + 1}]</span>
+                <div>
+                  <p className="text-[#121c28] not-italic font-medium">{ref.title}</p>
+                  <p>{ref.authors} {ref.year && `(${ref.year})`} {ref.journal && `— ${ref.journal}`}</p>
+                  {ref.url && (
+                    <a
+                      href={ref.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[#006948] hover:underline inline-flex items-center gap-1 mt-1 not-italic"
+                    >
+                      Kaynağa git
+                      <span className="material-symbols-outlined text-[16px]">open_in_new</span>
+                    </a>
                   )}
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             ))}
           </div>
         ) : (
-          <Card className="bg-muted/20 border-dashed">
-            <CardContent className="flex items-center justify-center py-8 text-muted-foreground text-sm">
-              Bu katkı maddesi için kaynak bilgisi bulunmuyor.
-            </CardContent>
-          </Card>
+          <p className="text-[#3d4a42]">Bu katkı maddesi için kaynak bilgisi bulunmuyor.</p>
         )}
-      </div>
+      </section>
     </motion.div>
   );
 }

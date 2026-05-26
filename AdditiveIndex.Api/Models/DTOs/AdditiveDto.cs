@@ -122,6 +122,7 @@ public class StatsOverviewDto
     public int TotalAdditives { get; set; }
     public int TotalCategories { get; set; }
     public int TotalReferences { get; set; }
+    public int TotalProducts { get; set; }
     public Dictionary<string, int> ByRiskLevel { get; set; } = new();
     public DateTime LastUpdated { get; set; }
 }
