@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
+import { useTheme } from "@/contexts/theme-context";
 
 export function TopNavBar() {
   const [location] = useLocation();
   const [searchQuery, setSearchQuery] = useState("");
+  const { theme, toggleTheme } = useTheme();
 
   const navItems = [
     { name: "Dictionary", href: "/additives", active: location.startsWith("/additives") },
@@ -56,8 +58,12 @@ export function TopNavBar() {
           </div>
 
           {/* Theme Toggle */}
-          <button className="material-symbols-outlined text-[#006948] hover:text-[#121c28] transition-colors active:scale-95">
-            contrast
+          <button 
+            onClick={toggleTheme}
+            className="material-symbols-outlined text-[#006948] hover:text-[#121c28] transition-colors active:scale-95"
+            title={theme === "light" ? "Karanlık moda geç" : "Aydınlık moda geç"}
+          >
+            {theme === "light" ? "dark_mode" : "light_mode"}
           </button>
 
           {/* Account */}

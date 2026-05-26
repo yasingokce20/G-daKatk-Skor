@@ -8,6 +8,8 @@ import { AdditiveDetail } from "@/pages/additives/detail";
 import { ProductsList } from "@/pages/products/list";
 import { ProductDetail } from "@/pages/products/detail";
 import { Docs } from "@/pages/docs";
+import { DataSecurityPage } from "@/pages/data-security";
+import { ApiGuidePage } from "@/pages/api-guide";
 import NotFound from "@/pages/not-found";
 
 export function AppRouter() {
@@ -22,6 +24,8 @@ export function AppRouter() {
             <Route path="/products" component={ProductsList} />
             <Route path="/products/:id" component={ProductDetail} />
             <Route path="/docs" component={Docs} />
+            <Route path="/data-security" component={DataSecurityPage} />
+            <Route path="/api-guide" component={ApiGuidePage} />
             <Route component={NotFound} />
           </Switch>
         </div>

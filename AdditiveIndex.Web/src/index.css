@@ -143,6 +143,74 @@ body {
   color: #ffffff;
 }
 
+/* Dark Mode Overrides */
+.dark {
+  --color-background: #121c28;
+  --color-on-background: #f8f9ff;
+  --color-surface: #1a2532;
+  --color-on-surface: #f8f9ff;
+  --color-surface-variant: #27313e;
+  --color-on-surface-variant: #bccac0;
+  --color-surface-dim: #0d1620;
+  --color-surface-bright: #27313e;
+  --color-inverse-surface: #f8f9ff;
+  --color-inverse-on-surface: #121c28;
+  --color-outline: #3d4a42;
+  --color-outline-variant: #27313e;
+  --color-primary-container: #005137;
+  --color-on-primary-container: #85f8c4;
+  --color-secondary-container: #6e3900;
+  --color-on-secondary-container: #ffdcc3;
+  --color-tertiary-container: #93000b;
+  --color-on-tertiary-container: #ffdad6;
+  
+  /* Body background */
+  background-color: #121c28;
+  color: #f8f9ff;
+}
+
+.dark .bg-white {
+  background-color: #1a2532 !important;
+}
+
+.dark .bg-\[\#f8f9ff\] {
+  background-color: #121c28 !important;
+}
+
+.dark .bg-\[\#eef4ff\] {
+  background-color: #1a2532 !important;
+}
+
+.dark .bg-\[\#d9e3f4\] {
+  background-color: #27313e !important;
+}
+
+.dark .text-\[\#121c28\] {
+  color: #f8f9ff !important;
+}
+
+.dark .text-\[\#3d4a42\] {
+  color: #bccac0 !important;
+}
+
+.dark .text-\[\#6d7a72\] {
+  color: #9aa5a0 !important;
+}
+
+.dark .border-\[\#bccac0\] {
+  border-color: #3d4a42 !important;
+}
+
+.dark header {
+  background-color: #1a2532;
+  border-color: #27313e;
+}
+
+.dark footer {
+  background-color: #0d1620;
+  border-color: #27313e;
+}
+
 /* Utility Classes */
 @layer utilities {
   .text-display-lg { font: 700 48px/56px Inter; letter-spacing: -0.02em; }

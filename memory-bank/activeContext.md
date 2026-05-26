@@ -1,19 +1,29 @@
 # Active Context: AdditiveIndex
 
 ## Current Focus
-Frontend integration is **complete**. Both .NET API and React frontend are running and connected.
+**Phase 1: UI/UX & Content Improvements** - ✅ **TAMAMLANDI**
 
-## Recent Changes
-- React frontend copied from demo into `AdditiveIndex.Web/`.
-- `@workspace/api-client-react` internalized to `src/api/` (custom-fetch + generated hooks/schemas).
-- Vite proxy: `/api/*` → `http://localhost:5004`.
-- All pages: Dashboard, Additives (list/detail), Products (list/detail), Categories, Docs.
-- shadcn/ui components, Tailwind CSS 4, framer-motion, wouter router, React Query.
+Tüm Phase 1 özellikleri başarıyla tamamlandı. Phase 2 (Kullanıcı Sistemi) için hazırız.
 
-## Next Steps (Immediate)
-1. Verify all pages render correctly in the browser.
-2. Add FluentValidation for request DTOs (backend).
-3. Polish UI/UX if needed.
+## Recent Changes (Phase 1 - Son Tamamlananlar)
+- ✅ Ürünler listesi sayfasına breadcrumb navigation eklendi
+- ✅ Dark/Light tema sistemi implemente edildi (ThemeProvider + localStorage + Material Symbols)
+- ✅ Veri Güvenliği ve Etik sayfası oluşturuldu (4 kaynak, risk metodolojisi, etik ilkeler)
+- ✅ Geliştiriciler için interaktif API Rehberi oluşturuldu (4 tab: Genel Bakış, Katkı Maddeleri, Ürünler, İstatistikler)
+- ✅ Footer linkleri güncellendi
+- ✅ Dark mode CSS değişkenleri eklendi
+
+## Next Steps (Phase 2 - Kullanıcı Sistemi)
+1. User entity oluştur (id, email, username, passwordHash, role, createdAt)
+2. JWT authentication backend implementasyonu
+3. Login/Register API endpoints
+4. Frontend auth context ve protected routes
+5. Login/Register sayfaları
+
+## Notes
+- Tüm yeni sayfalar Material Design 3 tasarımına uygun oluşturuldu
+- API rehberi sayfası kod örnekleri ve interaktif tab'lar içeriyor
+- Tema değişikliği anında uygulanıyor ve localStorage'da saklanıyor
 
 ## Active Decisions & Considerations
 - **Architecture:** Single-project API. Split to Clean Architecture later if needed.

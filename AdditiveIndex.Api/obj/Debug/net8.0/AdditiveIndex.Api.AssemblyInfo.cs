@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("AdditiveIndex.Api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+dc8c0b6dae0ac85e997deef9e77c937ab33ce212")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+34efb706c1abdb4a10370e0d952358ab9cb896c3")]
 [assembly: System.Reflection.AssemblyProductAttribute("AdditiveIndex.Api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("AdditiveIndex.Api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

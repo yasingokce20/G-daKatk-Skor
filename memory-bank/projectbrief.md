@@ -9,15 +9,29 @@ A backend-focused .NET 8 Web API that provides structured, reliable data about f
 3. **Reusable Foundation:** Design the web service so it can serve as a stable backend for future frontend or mobile clients.
 
 ## Scope
-- **In Scope (MVP):**
-  - Additive catalog with search and filtering (by E-code, name, risk level).
-  - Additive detail view: name, E-code, risk level, source/origin, scientific references, products containing it.
-  - Community discussion page (read-only/chat-like for now; no user edits to core data).
-  - REST API with Swagger/OpenAPI documentation.
-- **Out of Scope (for now):**
-  - User-generated additive data edits.
-  - Admin dashboard.
-  - Advanced analytics or recommendation engine.
+
+### Phase 1: MVP (Tamamlandı)
+- [x] Additive catalog with search and filtering (by E-code, name, risk level).
+- [x] Additive detail view: name, E-code, risk level, source/origin, scientific references, products containing it.
+- [x] Product catalog with search and filtering.
+- [x] REST API with Swagger/OpenAPI documentation.
+
+### Phase 2: UI/UX & Content (Aktif)
+- Dark/Light tema desteği
+- Veri Güvenliği ve Etik sayfası
+- Geliştiriciler için API rehberi
+- Breadcrumb navigation
+
+### Phase 3: Kullanıcı & Topluluk (Planlanan)
+- **Kullanıcı Sistemi:** Kayıt, giriş, JWT yetkilendirme
+- **Yorum Sistemi:** Ürün ve katkı maddelerine kullanıcı yorumları
+- **Blog Modülü:** Faydalı makaleler, rehberler, tartışma forumu
+- **Topluluk:** Kullanıcılar konu başlığı açıp tartışabilecek
+
+### Out of Scope
+- User-generated additive data edits (core data remains admin-only).
+- Admin dashboard (Phase 4+).
+- Advanced analytics or ML recommendation engine.
 
 ## Success Criteria
 - All API responses return consistent, well-structured DTOs.

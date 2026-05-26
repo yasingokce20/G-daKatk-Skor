@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "wouter";
-import { Search, ShoppingBag, ChevronRight, AlertTriangle, Ban, ShieldCheck, Info } from "lucide-react";
+import { Search, ShoppingBag, ChevronRight, AlertTriangle } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -69,28 +69,38 @@ export function ProductsList() {
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="space-y-6"
+      className="pt-8 pb-16"
     >
-      <div>
-        <h1 className="text-2xl font-bold text-foreground">Ürünler</h1>
-        <p className="text-muted-foreground text-sm mt-1">
+      {/* Breadcrumb */}
+      <nav className="py-4 flex items-center gap-2 text-[#6d7a72] text-sm mb-6">
+        <Link href="/">
+          <span className="hover:text-[#006948] cursor-pointer">Anasayfa</span>
+        </Link>
+        <span className="material-symbols-outlined text-[16px]">chevron_right</span>
+        <span className="text-[#121c28] font-semibold">Ürünler</span>
+      </nav>
+
+      {/* Header */}
+      <div className="mb-8">
+        <h1 className="text-headline-lg text-[#121c28] mb-2">Ürünler</h1>
+        <p className="text-body-md text-[#3d4a42]">
           Türkiye piyasasındaki ürünlerin içerik listesini keşfedin.
         </p>
       </div>
 
       {/* Filters */}
-      <div className="flex flex-col sm:flex-row gap-3 bg-card p-4 rounded-xl border">
+      <div className="flex flex-col sm:flex-row gap-3 bg-white p-4 rounded-xl border border-[#bccac0] mb-8">
         <div className="flex-1 relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+          <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#6d7a72]">search</span>
           <Input
             placeholder="Ürün veya marka ara..."
             value={search}
             onChange={(e) => handleSearchChange(e.target.value)}
-            className="pl-9"
+            className="pl-10 bg-[#f8f9ff] border-[#bccac0] focus:border-[#006948]"
           />
         </div>
         <Select value={category} onValueChange={(val) => { setCategory(val); setPage(1); }}>
-          <SelectTrigger className="w-full sm:w-[210px]">
+          <SelectTrigger className="w-full sm:w-[210px] bg-[#f8f9ff] border-[#bccac0]">
             <SelectValue placeholder="Kategori" />
           </SelectTrigger>
           <SelectContent>
@@ -104,38 +114,43 @@ export function ProductsList() {
 
       {/* Product Grid */}
       {isLoading ? (
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {Array.from({ length: 9 }).map((_, i) => (
-            <Skeleton key={i} className="h-28 rounded-xl" />
+            <Skeleton key={i} className="h-32 rounded-xl" />
           ))}
         </div>
       ) : isError ? (
-        <div className="text-center py-12 text-muted-foreground">
-          <AlertTriangle className="w-8 h-8 mx-auto mb-2 text-destructive opacity-60" />
-          Ürünler yüklenirken hata oluştu.
+        <div className="text-center py-12 bg-[#ffdad6]/30 rounded-xl border border-[#e02928]/20">
+          <span className="material-symbols-outlined text-4xl text-[#bb0112] mb-2 block">error</span>
+          <p className="text-[#3d4a42]">Ürünler yüklenirken hata oluştu.</p>
         </div>
       ) : response?.data.length === 0 ? (
-        <div className="text-center py-12 text-muted-foreground">
-          <ShoppingBag className="w-8 h-8 mx-auto mb-2 opacity-30" />
-          Aramanızla eşleşen ürün bulunamadı.
+        <div className="text-center py-12 bg-[#eef4ff] rounded-xl border border-[#bccac0]">
+          <span className="material-symbols-outlined text-4xl text-[#6d7a72] mb-2 block">shopping_bag</span>
+          <p className="text-[#3d4a42]">Aramanızla eşleşen ürün bulunamadı.</p>
         </div>
       ) : (
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {response?.data.map((product) => (
             <Link key={product.id} href={`/products/${product.id}`}>
-              <div className="group flex items-center justify-between p-4 rounded-xl border bg-card hover:border-primary/40 hover:shadow-sm transition-all cursor-pointer h-full">
-                <div className="min-w-0">
-                  <div className="font-medium text-sm truncate group-hover:text-primary transition-colors">
-                    {product.name}
-                  </div>
-                  <div className="text-xs text-muted-foreground mt-0.5">{product.brand}</div>
+              <div className="group bg-white border border-[#bccac0] rounded-xl p-5 clinical-shadow hover:shadow-lg transition-all cursor-pointer h-full flex flex-col">
+                <div className="flex items-start justify-between mb-3">
+                  <span className="material-symbols-outlined text-3xl text-[#006948]/60">inventory_2</span>
                   {product.productCategory && (
-                    <Badge variant="secondary" className="mt-2 text-[10px] h-4 px-1.5 font-normal">
+                    <Badge className="bg-[#d9e3f4] text-[#003921] hover:bg-[#d9e3f4] text-[10px]">
                       {product.productCategory}
                     </Badge>
                   )}
                 </div>
-                <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-primary flex-shrink-0 ml-2 transition-colors" />
+                <h3 className="font-semibold text-[#121c28] mb-1 group-hover:text-[#006948] transition-colors line-clamp-2">
+                  {product.name}
+                </h3>
+                <p className="text-sm text-[#6d7a72] mb-3">{product.brand}</p>
+                {product.barcode && (
+                  <p className="text-xs text-[#6d7a72] font-mono mt-auto pt-3 border-t border-[#bccac0]">
+                    Barkod: {product.barcode}
+                  </p>
+                )}
               </div>
             </Link>
           ))}
@@ -144,22 +159,33 @@ export function ProductsList() {
 
       {/* Pagination */}
       {response && response.pagination.totalPages > 1 && (
-        <div className="flex items-center justify-between pt-2">
-          <div className="text-sm text-muted-foreground">
-            Toplam {response.pagination.total} ürün
+        <div className="flex items-center justify-between pt-6 mt-6 border-t border-[#bccac0]">
+          <div className="text-sm text-[#6d7a72]">
+            Toplam <strong className="text-[#121c28]">{response.pagination.total}</strong> ürün
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1}>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => setPage((p) => Math.max(1, p - 1))} 
+              disabled={page === 1}
+              className="border-[#bccac0] text-[#3d4a42] hover:bg-[#d9e3f4]"
+            >
+              <span className="material-symbols-outlined text-[18px] mr-1">arrow_back</span>
               Önceki
             </Button>
-            <span className="text-sm px-2">{page} / {response.pagination.totalPages}</span>
+            <span className="text-sm px-3 py-1 bg-[#006948] text-white rounded-lg font-medium">
+              {page} / {response.pagination.totalPages}
+            </span>
             <Button
               variant="outline"
               size="sm"
               onClick={() => setPage((p) => Math.min(response.pagination.totalPages, p + 1))}
               disabled={page === response.pagination.totalPages}
+              className="border-[#bccac0] text-[#3d4a42] hover:bg-[#d9e3f4]"
             >
               Sonraki
+              <span className="material-symbols-outlined text-[18px] ml-1">arrow_forward</span>
             </Button>
           </div>
         </div>

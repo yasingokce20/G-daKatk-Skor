@@ -35,8 +35,43 @@
 ## In Progress
 - None.
 
-## Pending
-- [ ] Add FluentValidation for request DTOs.
+## Completed (Son Tamamlananlar)
+
+### Phase 1: UI/UX & Frontend ✅ TAMAMLANDI
+- [x] Ürünler sayfasına breadcrumb navigation ekle
+- [x] Tema seçeneği (Dark/Light mode) - localStorage + Context
+- [x] Veri Güvenliği sayfası oluştur (bilgi kaynakları, etik, güvenlik)
+- [x] Geliştiriciler için API rehberi blog sayfası (interaktif tab'lı)
+
+## Pending (Yeni Özellikler - Öncelik Sırası)
+
+### Phase 2: Kullanıcı Sistemi & Yetkilendirme (Sıradaki)
+
+### Phase 2: Kullanıcı Sistemi & Yetkilendirme
+- [ ] User entity ve migration
+- [ ] JWT tabanlı authentication sistemi
+- [ ] Login/Register API endpoints
+- [ ] Frontend auth context ve protected routes
+- [ ] Kullanıcı profil sayfası
+
+### Phase 3: Yorum Sistemi
+- [ ] Comment entity (ürün ve katkı maddesi için)
+- [ ] Comment API endpoints (CRUD)
+- [ ] Frontend yorum componentleri
+- [ ] Yorum moderasyonu (admin onayı)
+
+### Phase 4: Blog & Tartışma Modülü
+- [ ] BlogPost entity (makale/rehber/tartışma)
+- [ ] BlogCategory entity
+- [ ] Blog API endpoints
+- [ ] Blog listeleme ve detay sayfaları
+- [ ] Örnek içerikler: "E Kodları Nasıl Okunur?", "Sağlıklı Beslenme Rehberi", "API Kullanım Kılavuzu"
+- [ ] Tartışma (Discussion) modülünü aktifleştir - kullanıcılar konu açabilecek
+
+### Phase 5: İyileştirmeler
+- [ ] Add FluentValidation for request DTOs
+- [ ] SEO optimizasyonları
+- [ ] Performance caching (Redis/memory)
 
 ## Known Issues
 - None.

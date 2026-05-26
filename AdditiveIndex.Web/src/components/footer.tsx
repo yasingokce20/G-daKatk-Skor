@@ -1,10 +1,10 @@
+import { Link } from "wouter";
+
 export function Footer() {
-  const links = [
-    { name: "Community Guidelines", href: "#" },
-    { name: "Methodology", href: "#" },
-    { name: "Privacy Policy", href: "#" },
-    { name: "API Documentation", href: "http://localhost:5004/swagger" },
-    { name: "Contact Support", href: "#" },
+  const internalLinks = [
+    { name: "Veri Güvenliği", href: "/data-security" },
+    { name: "API Rehberi", href: "/api-guide" },
+    { name: "Swagger UI", href: "http://localhost:5004/swagger" },
   ];
 
   return (
@@ -21,16 +21,26 @@ export function Footer() {
           </div>
 
           <nav className="flex flex-wrap justify-center gap-6">
-            {links.map((link) => (
-              <a
-                key={link.name}
-                href={link.href}
-                target={link.href.startsWith("http") ? "_blank" : undefined}
-                rel={link.href.startsWith("http") ? "noopener noreferrer" : undefined}
-                className="text-[#3d4a42] hover:text-[#121c28] transition-colors text-sm font-medium"
-              >
-                {link.name}
-              </a>
+            {internalLinks.map((link) => (
+              link.href.startsWith("http") ? (
+                <a
+                  key={link.name}
+                  href={link.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[#3d4a42] hover:text-[#121c28] transition-colors text-sm font-medium"
+                >
+                  {link.name}
+                </a>
+              ) : (
+                <Link
+                  key={link.name}
+                  href={link.href}
+                  className="text-[#3d4a42] hover:text-[#121c28] transition-colors text-sm font-medium"
+                >
+                  {link.name}
+                </Link>
+              )
             ))}
           </nav>
         </div>

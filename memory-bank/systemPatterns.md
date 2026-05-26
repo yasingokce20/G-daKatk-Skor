@@ -3,10 +3,16 @@
 ## Architecture
 - **Pattern:** Layered / Clean Architecture (lightweight single-project start, split later if needed).
 - **Layers:**
-  - **API (Controllers):** Thin controllers with inline mapping. `AdditivesController`, `CategoriesController`, `ReferencesController`, `ProductsController`, `StatsController`, `HealthController`, `DiscussionsController`, `ImportController`.
-  - **Application (Services):** `OffDataImporter` for OFF API integration.
-  - **Domain (Entities):** `Additive`, `Product`, `AdditiveProduct`, `Category`, `Reference`, `Discussion`.
+  - **API (Controllers):** Thin controllers with inline mapping. `AdditivesController`, `CategoriesController`, `ReferencesController`, `ProductsController`, `StatsController`, `HealthController`, `DiscussionsController`, `ImportController`, `AuthController`, `CommentsController`, `BlogController`.
+  - **Application (Services):** `OffDataImporter` for OFF API integration, `JwtService` for authentication.
+  - **Domain (Entities):** `Additive`, `Product`, `AdditiveProduct`, `Category`, `Reference`, `Discussion`, `User`, `Comment`, `BlogPost`, `BlogCategory`.
   - **Data (DbContext / Seed):** EF Core `AppDbContext`, `SeedData`.
+
+### New Entities (Phase 2-4)
+- **User:** id, email, username, passwordHash, role (user/admin), createdAt
+- **Comment:** id, userId, targetType (additive/product), targetId, content, createdAt, isApproved
+- **BlogPost:** id, title, slug, content, authorId, categoryId, type (article/discussion), status, createdAt
+- **BlogCategory:** id, name, description
 
 ## Design Patterns
 - **DTO Pattern:** All API inputs/outputs use DTOs. Separate list DTOs with pagination envelope.
@@ -32,5 +38,8 @@
   - `GET /api/products/{id}` - detail with additives.
   - `GET /api/stats/overview|risk-distribution|category-distribution` - dashboard stats.
   - `GET /api/healthz` - health check.
-  - `GET/POST /api/discussions` - community.
+  - `POST /api/auth/register|login` - JWT authentication.
+  - `GET/POST /api/comments?targetType=&targetId=` - comments on additives/products.
+  - `GET/POST /api/blog/posts` - blog articles and discussions.
+  - `GET/POST /api/blog/categories` - blog categories.
   - `POST /api/import/product/{barcode}` - OFF import.
