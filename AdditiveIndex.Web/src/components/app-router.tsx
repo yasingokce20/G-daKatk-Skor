@@ -10,6 +10,8 @@ import { ProductDetail } from "@/pages/products/detail";
 import { Docs } from "@/pages/docs";
 import { DataSecurityPage } from "@/pages/data-security";
 import { ApiGuidePage } from "@/pages/api-guide";
+import { LoginPage } from "@/pages/auth/login";
+import { RegisterPage } from "@/pages/auth/register";
 import NotFound from "@/pages/not-found";
 
 export function AppRouter() {
@@ -26,6 +28,8 @@ export function AppRouter() {
             <Route path="/docs" component={Docs} />
             <Route path="/data-security" component={DataSecurityPage} />
             <Route path="/api-guide" component={ApiGuidePage} />
+            <Route path="/login" component={LoginPage} />
+            <Route path="/register" component={RegisterPage} />
             <Route component={NotFound} />
           </Switch>
         </div>

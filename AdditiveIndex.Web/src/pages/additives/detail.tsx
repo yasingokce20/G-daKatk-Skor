@@ -30,7 +30,7 @@ export function AdditiveDetail() {
 
   const { data: references, isLoading: refsLoading } = useListReferences(
     { additiveId: numericId },
-    { query: { enabled: !!numericId } }
+    { query: { queryKey: ["references", numericId], enabled: !!numericId } }
   );
 
   const { data: categories } = useListCategories();

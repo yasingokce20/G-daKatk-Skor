@@ -1,11 +1,15 @@
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
 import { useTheme } from "@/contexts/theme-context";
+import { useAuth } from "@/contexts/auth-context";
+import { Button } from "@/components/ui/button";
 
 export function TopNavBar() {
   const [location] = useLocation();
   const [searchQuery, setSearchQuery] = useState("");
   const { theme, toggleTheme } = useTheme();
+  const { user, isAuthenticated, logout } = useAuth();
+  const [showUserMenu, setShowUserMenu] = useState(false);
 
   const navItems = [
     { name: "Dictionary", href: "/additives", active: location.startsWith("/additives") },
@@ -66,10 +70,60 @@ export function TopNavBar() {
             {theme === "light" ? "dark_mode" : "light_mode"}
           </button>
 
-          {/* Account */}
-          <button className="material-symbols-outlined text-[#006948] hover:text-[#121c28] transition-colors active:scale-95">
-            account_circle
-          </button>
+          {/* Auth Section */}
+          {isAuthenticated ? (
+            <div className="relative">
+              <button 
+                onClick={() => setShowUserMenu(!showUserMenu)}
+                className="flex items-center gap-2 text-[#006948] hover:text-[#121c28] transition-colors"
+              >
+                <span className="material-symbols-outlined">account_circle</span>
+                <span className="hidden sm:block text-sm font-medium">{user?.username}</span>
+                <span className="material-symbols-outlined text-[16px]">
+                  {showUserMenu ? "expand_less" : "expand_more"}
+                </span>
+              </button>
+              
+              {showUserMenu && (
+                <div className="absolute right-0 mt-2 w-48 bg-white border border-[#bccac0] rounded-xl shadow-lg py-2 z-50">
+                  <div className="px-4 py-2 border-b border-[#bccac0]">
+                    <p className="text-sm font-semibold text-[#121c28]">{user?.username}</p>
+                    <p className="text-xs text-[#6d7a72]">{user?.email}</p>
+                  </div>
+                  <button
+                    onClick={() => {
+                      logout();
+                      setShowUserMenu(false);
+                    }}
+                    className="w-full px-4 py-2 text-left text-sm text-[#bb0112] hover:bg-[#ffdad6] flex items-center gap-2"
+                  >
+                    <span className="material-symbols-outlined text-[18px]">logout</span>
+                    Çıkış Yap
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="flex items-center gap-2">
+              <Link href="/login">
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  className="text-[#006948] hover:text-[#005137] hover:bg-[#d9e3f4]"
+                >
+                  Giriş
+                </Button>
+              </Link>
+              <Link href="/register">
+                <Button 
+                  size="sm"
+                  className="bg-[#006948] hover:bg-[#005137] text-white"
+                >
+                  Kayıt
+                </Button>
+              </Link>
+            </div>
+          )}
 
           {/* Mobile Menu */}
           <button className="material-symbols-outlined text-[#121c28] md:hidden">

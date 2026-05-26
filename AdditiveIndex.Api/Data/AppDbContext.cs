@@ -14,6 +14,12 @@ public class AppDbContext : DbContext
     public DbSet<Reference> References => Set<Reference>();
     public DbSet<Discussion> Discussions => Set<Discussion>();
 
+    // User & Auth
+    public DbSet<User> Users => Set<User>();
+    public DbSet<Comment> Comments => Set<Comment>();
+    public DbSet<BlogPost> BlogPosts => Set<BlogPost>();
+    public DbSet<BlogCategory> BlogCategories => Set<BlogCategory>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -93,6 +99,66 @@ public class AppDbContext : DbContext
             entity.HasKey(d => d.Id);
             entity.Property(d => d.Username).IsRequired().HasMaxLength(100);
             entity.Property(d => d.Message).IsRequired().HasMaxLength(2000);
+        });
+
+        // User & Auth Configuration
+        modelBuilder.Entity<User>(entity =>
+        {
+            entity.HasKey(u => u.Id);
+            entity.HasIndex(u => u.Email).IsUnique();
+            entity.HasIndex(u => u.Username).IsUnique();
+            entity.Property(u => u.Email).IsRequired().HasMaxLength(255);
+            entity.Property(u => u.Username).IsRequired().HasMaxLength(50);
+            entity.Property(u => u.PasswordHash).IsRequired().HasMaxLength(255);
+            entity.Property(u => u.Role)
+                  .HasConversion<string>()
+                  .HasMaxLength(20);
+        });
+
+        modelBuilder.Entity<Comment>(entity =>
+        {
+            entity.HasKey(c => c.Id);
+            entity.Property(c => c.Content).IsRequired().HasMaxLength(2000);
+
+            entity.HasOne(c => c.User)
+                  .WithMany(u => u.Comments)
+                  .HasForeignKey(c => c.UserId)
+                  .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(c => c.Additive)
+                  .WithMany()
+                  .HasForeignKey(c => c.AdditiveId)
+                  .OnDelete(DeleteBehavior.SetNull);
+
+            entity.HasOne(c => c.Product)
+                  .WithMany()
+                  .HasForeignKey(c => c.ProductId)
+                  .OnDelete(DeleteBehavior.SetNull);
+        });
+
+        modelBuilder.Entity<BlogPost>(entity =>
+        {
+            entity.HasKey(b => b.Id);
+            entity.HasIndex(b => b.Slug).IsUnique();
+            entity.Property(b => b.Title).IsRequired().HasMaxLength(200);
+            entity.Property(b => b.Slug).IsRequired().HasMaxLength(200);
+            entity.Property(b => b.Content).IsRequired();
+            entity.Property(b => b.Summary).HasMaxLength(500);
+            entity.Property(b => b.FeaturedImage).HasMaxLength(1000);
+
+            entity.HasOne(b => b.Author)
+                  .WithMany(u => u.BlogPosts)
+                  .HasForeignKey(b => b.AuthorId)
+                  .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<BlogCategory>(entity =>
+        {
+            entity.HasKey(bc => bc.Id);
+            entity.HasIndex(bc => bc.Slug).IsUnique();
+            entity.Property(bc => bc.Name).IsRequired().HasMaxLength(100);
+            entity.Property(bc => bc.Slug).IsRequired().HasMaxLength(100);
+            entity.Property(bc => bc.Description).HasMaxLength(500);
         });
     }
 }
