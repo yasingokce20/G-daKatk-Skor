@@ -2,6 +2,7 @@ import { Link } from "wouter";
 
 export function Footer() {
   const internalLinks = [
+    { name: "Topluluk", href: "/community" },
     { name: "Veri Güvenliği", href: "/data-security" },
     { name: "API Rehberi", href: "/api-guide" },
     { name: "Swagger UI", href: "http://localhost:5004/swagger" },
@@ -13,10 +14,10 @@ export function Footer() {
         <div className="flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="flex flex-col items-center md:items-start gap-2">
             <span className="font-semibold text-xl text-[#121c28]">
-              PureFood Trace
+              GıdaKatkıRadarı
             </span>
             <p className="text-[#3d4a42] text-sm text-center md:text-left">
-              © 2024 PureFood Trace. Clinical data for food safety transparency.
+              © 2025 GıdaKatkıRadarı. Gıda katkı maddelerinde şeffaflık için bilimsel veri.
             </p>
           </div>
 

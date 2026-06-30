@@ -12,10 +12,10 @@ export function TopNavBar() {
   const [showUserMenu, setShowUserMenu] = useState(false);
 
   const navItems = [
-    { name: "Dictionary", href: "/additives", active: location.startsWith("/additives") },
-    { name: "Blog", href: "/blog", active: location === "/blog" },
-    { name: "Resources", href: "/docs", active: location === "/docs" },
-    { name: "Safety Standards", href: "/categories", active: location === "/categories" },
+    { name: "Katkı Maddeleri", href: "/additives", active: location.startsWith("/additives") },
+    { name: "Ürünler", href: "/products", active: location.startsWith("/products") },
+    { name: "Kategoriler", href: "/categories", active: location === "/categories" },
+    { name: "Kaynaklar", href: "/docs", active: location === "/docs" },
   ];
 
   return (
@@ -24,7 +24,7 @@ export function TopNavBar() {
         {/* Logo */}
         <Link href="/">
           <div className="font-semibold text-2xl text-[#006948] tracking-tight cursor-pointer">
-            PureFood Trace
+            GıdaKatkıRadarı
           </div>
         </Link>
 

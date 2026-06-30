@@ -7,9 +7,11 @@ import { AdditivesList } from "@/pages/additives/list";
 import { AdditiveDetail } from "@/pages/additives/detail";
 import { ProductsList } from "@/pages/products/list";
 import { ProductDetail } from "@/pages/products/detail";
+import { Categories } from "@/pages/categories";
 import { Docs } from "@/pages/docs";
 import { DataSecurityPage } from "@/pages/data-security";
 import { ApiGuidePage } from "@/pages/api-guide";
+import { CommunityPage } from "@/pages/community";
 import { LoginPage } from "@/pages/auth/login";
 import { RegisterPage } from "@/pages/auth/register";
 import NotFound from "@/pages/not-found";
@@ -25,9 +27,11 @@ export function AppRouter() {
             <Route path="/additives/:id" component={AdditiveDetail} />
             <Route path="/products" component={ProductsList} />
             <Route path="/products/:id" component={ProductDetail} />
+            <Route path="/categories" component={Categories} />
             <Route path="/docs" component={Docs} />
             <Route path="/data-security" component={DataSecurityPage} />
             <Route path="/api-guide" component={ApiGuidePage} />
+            <Route path="/community" component={CommunityPage} />
             <Route path="/login" component={LoginPage} />
             <Route path="/register" component={RegisterPage} />
             <Route component={NotFound} />
